@@ -1,0 +1,34 @@
+From d9bb1f3847bd32d6a1d94604ea1ddcfb6492f6e9 Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Tue, 20 Aug 2024 09:18:28 +0200
+Subject: [PATCH] Fix error: event_timer.c-54.3 smaller int
+
+Fixes next errors:
+/buildd/sources/drivers/soc/qcom/event_timer.c:54:3: error: field designator 'head' does not refer to any field in type 'typeof(struct timerqueue_head)' (aka 'struct timerqueue_head')
+        .head = RB_ROOT,
+         ^
+/buildd/sources/drivers/soc/qcom/event_timer.c:55:3: error: field designator 'next' does not refer to any field in type 'typeof(struct timerqueue_head)' (aka 'struct timerqueue_head')
+        .next = NULL,
+         ^
+2 errors generated.
+---
+ drivers/soc/qcom/event_timer.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/soc/qcom/event_timer.c b/drivers/soc/qcom/event_timer.c
+index d50d68c4aefd..c1f1552dafee 100644
+--- a/drivers/soc/qcom/event_timer.c
++++ b/drivers/soc/qcom/event_timer.c
+@@ -51,8 +51,7 @@ struct hrtimer_info {
+ static DEFINE_PER_CPU(struct hrtimer_info, per_cpu_hrtimer);
+ 
+ static DEFINE_PER_CPU(struct timerqueue_head, timer_head) = {
+-	.head = RB_ROOT,
+-	.next = NULL,
++	.rb_root = RB_ROOT_CACHED,
+ };
+ 
+ static DEFINE_SPINLOCK(event_timer_lock);
+-- 
+2.39.2
+

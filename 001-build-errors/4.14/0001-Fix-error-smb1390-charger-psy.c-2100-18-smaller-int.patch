@@ -1,0 +1,28 @@
+From 63461f77468fce9c411b598ac3329bc0da18249b Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Tue, 20 Aug 2024 09:15:20 +0200
+Subject: [PATCH] Fix error: smb1390-charger-psy.c-2100:18 smaller int
+
+Fixes next error:
+/buildd/sources/drivers/power/supply/qcom/smb1390-charger-psy.c:2100:18: warning: cast to smaller integer type 'int' from 'const void *' [-Wvoid-pointer-to-int-cast]
+        chip->cp_role = (int)of_device_get_match_data(chip->dev);
+---
+ drivers/power/supply/qcom/smb1390-charger-psy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/qcom/smb1390-charger-psy.c b/drivers/power/supply/qcom/smb1390-charger-psy.c
+index 2ba33936e048..11c08cef6b96 100644
+--- a/drivers/power/supply/qcom/smb1390-charger-psy.c
++++ b/drivers/power/supply/qcom/smb1390-charger-psy.c
+@@ -2097,7 +2097,7 @@ static int smb1390_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	platform_set_drvdata(pdev, chip);
+-	chip->cp_role = (int)of_device_get_match_data(chip->dev);
++	chip->cp_role = (uintptr_t)of_device_get_match_data(chip->dev);
+ 	switch (chip->cp_role) {
+ 	case CP_MASTER:
+ 		rc = smb1390_master_probe(chip);
+-- 
+2.39.2
+
