@@ -1,0 +1,23 @@
+From 85216d5bc960cade9227ba6e802d567903bf4374 Mon Sep 17 00:00:00 2001
+From: Alex Marcel <nitan.marcel@gmail.com>
+Date: Sat, 6 Nov 2021 16:52:03 +0200
+Subject: [PATCH] cust_defconfig: set local version to halium
+
+---
+ arch/arm64/configs/cust_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/configs/cust_defconfig b/arch/arm64/configs/cust_defconfig
+index 428f6a8d38ba..ca3d51aeb20c 100644
+--- a/arch/arm64/configs/cust_defconfig
++++ b/arch/arm64/configs/cust_defconfig
+@@ -1,5 +1,5 @@
+ CONFIG_HOTPLUG_SIZE_BITS=29
+-CONFIG_LOCALVERSION="-perf"
++CONFIG_LOCALVERSION="-halium"
+ # CONFIG_LOCALVERSION_AUTO is not set
+ CONFIG_SYSVIPC=y
+ CONFIG_NO_HZ=y
+-- 
+2.39.2
+
