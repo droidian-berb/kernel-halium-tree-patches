@@ -1,1 +1,1 @@
-# Halium and Droidian patches fosr the kernel tree
+# Halium and Droidian patches for the kernel tree
