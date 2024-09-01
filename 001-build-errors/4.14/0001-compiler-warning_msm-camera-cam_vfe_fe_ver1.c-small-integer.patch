@@ -1,0 +1,56 @@
+From 79fc47b90d1ee0e4fa121eec00b06b0f10e13663 Mon Sep 17 00:00:00 2001
+From: Nick Desaulniers <ndesaulniers@google.com>
+Date: Fri, 15 May 2020 16:03:34 -0700
+Subject: [PATCH] (compiler) warning: msm camera cam_vfe_fe_ver1.c small integer
+
+Fixes:
+drivers/media/platform/msm/camera/cam_isp/isp_hw_mgr/isp_hw/vfe_hw/vfe_top/cam_vfe_fe_ver1.c:399:20:
+error: cast to smaller integer type 'uint32_t' (aka 'unsigned int') from
+'uint32_t *' (aka 'unsigned int *') [-Werror,-Wpointer-to-int-cast]
+cam_cpas_reg_read((uint32_t)soc_private->cpas_handle,
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/media/platform/msm/camera/cam_isp/isp_hw_mgr/isp_hw/vfe_hw/vfe_top/cam_vfe_fe_ver1.c:403:20:
+error: cast to smaller integer type 'uint32_t' (aka 'unsigned int') from
+'uint32_t *' (aka 'unsigned int *') [-Werror,-Wpointer-to-int-cast]
+cam_cpas_reg_read((uint32_t)soc_private->cpas_handle,
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This code should be carefully reviewed, as this looks like the compiler
+has highlighted a bug.  Based on the use of soc_private->cpas_handle
+being passed to cam_cpas_reg_read in another translation unit,
+drivers/media/platform/msm/camera_floral/cam_isp/isp_hw_mgr/isp_hw/vfe_hw/vfe_top/cam_vfe_camif_ver2.c
+I suspect that they meant to use the first element's value, not the
+address of the first element, truncated to 32b.
+
+Bug: 155426751
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Change-Id: I966e41000aec72c5d117cbce5097128daa818a3d
+Signed-off-by: celtare21 <celtare21@gmail.com>
+---
+ .../isp_hw_mgr/isp_hw/vfe_hw/vfe_top/cam_vfe_fe_ver1.c    | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/msm/camera/cam_isp/isp_hw_mgr/isp_hw/vfe_hw/vfe_top/cam_vfe_fe_ver1.c b/drivers/media/platform/msm/camera/cam_isp/isp_hw_mgr/isp_hw/vfe_hw/vfe_top/cam_vfe_fe_ver1.c
+index 6f833b35287e..c4853bb6d29c 100644
+--- a/drivers/media/platform/msm/camera/cam_isp/isp_hw_mgr/isp_hw/vfe_hw/vfe_top/cam_vfe_fe_ver1.c
++++ b/drivers/media/platform/msm/camera/cam_isp/isp_hw_mgr/isp_hw/vfe_hw/vfe_top/cam_vfe_fe_ver1.c
+@@ -396,12 +396,12 @@ static int cam_vfe_fe_reg_dump(
+ 		CAM_INFO(CAM_ISP, "offset 0x%x val 0x%x", i, val);
+ 	}
+ 
+-	cam_cpas_reg_read((uint32_t)soc_private->cpas_handle,
+-		CAM_CPAS_REG_CAMNOC, 0x420, true, &val);
++	cam_cpas_reg_read(soc_private->cpas_handle[0], CAM_CPAS_REG_CAMNOC,
++			  0x420, true, &val);
+ 	CAM_INFO(CAM_ISP, "IFE02_MAXWR_LOW offset 0x420 val 0x%x", val);
+ 
+-	cam_cpas_reg_read((uint32_t)soc_private->cpas_handle,
+-		CAM_CPAS_REG_CAMNOC, 0x820, true, &val);
++	cam_cpas_reg_read(soc_private->cpas_handle[0], CAM_CPAS_REG_CAMNOC,
++			  0x820, true, &val);
+ 	CAM_INFO(CAM_ISP, "IFE13_MAXWR_LOW offset 0x820 val 0x%x", val);
+ 
+ 	return rc;
+-- 
+2.39.2
+

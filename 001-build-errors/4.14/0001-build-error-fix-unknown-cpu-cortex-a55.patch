@@ -1,0 +1,28 @@
+From 113387f09d9e9526249a8a0c4fd4c8ad6e4135ef Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Tue, 27 Aug 2024 04:43:31 +0200
+Subject: [PATCH] (build) error-fix: unknown cpu cortex-a55
+
+Fix: Replace -mcpu=cortex-a55 with
+-march=armv8.2-a in KBUILD_CFLAGS
+from Makefile
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 034bdc7ef5b0..793456c47315 100644
+--- a/Makefile
++++ b/Makefile
+@@ -716,7 +716,7 @@ ifeq ($(cc-name),gcc)
+ KBUILD_CFLAGS	+= -mcpu=cortex-a76.cortex-a55 -mtune=cortex-a76.cortex-a55
+ endif
+ ifeq ($(cc-name),clang)
+-KBUILD_CFLAGS	+= -mcpu=cortex-a55 -mtune=cortex-a55
++KBUILD_CFLAGS   += -march=armv8.2-a -mtune=cortex-a55
+ endif
+ endif
+ 
+-- 
+2.39.2
+
