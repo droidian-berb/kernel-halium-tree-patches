@@ -1,12 +1,16 @@
 From 0db546b1c10dfe863a375ce54191a580f3d88221 Mon Sep 17 00:00:00 2001
 From: berbascum <berbascum@ticv.cat>
 Date: Mon, 22 Jul 2024 00:55:33 +0200
-Subject: [PATCH] (build) Fix: error section mismatch:
+Subject: [PATCH] (build) Fix: error section mismatch ksymtab_regulator_stub_init
 
- WARNING: modpost: Found 1 section mismatch(es).
+WARNING: modpost: Found 1 section mismatch(es).
 
- To see full details build your kernel with:
- 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+To see full details build your kernel with:
+'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+
+WARNING: vmlinux.o(___ksymtab+regulator_stub_init+0x0): Section mismatch in reference from the variable __ksymtab_regulator_stub_init to the function .init.text:regulator_stub_init()
+The symbol regulator_stub_init is exported and annotated __init 
+Fix this by removing the __init annotation of regulator_stub_init or drop the export.
 
 ---
  drivers/regulator/stub-regulator.c       | 2 +-
