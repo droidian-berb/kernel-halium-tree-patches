@@ -1,0 +1,29 @@
+From 32340b6734a3f02c2ecd0598824d2724cf0db3ba Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Fri, 6 Sep 2024 17:37:52 +0200
+Subject: [PATCH] Revert "Makefile: Add flag -fuse-ld=lld on clang"
+
+This reverts commit 5c776279fc54eb02dd09e62b50d5e0b5993fe73a.
+
+Generates unused fuse-ld=lld warnings at the build process start
+---
+ Makefile | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index d6a07073d16d..a620e19484bc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -383,8 +383,7 @@ HOST_LOADLIBES := $(HOST_LFS_LIBS)
+ 
+ ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
+ HOSTCFLAGS  += -Wno-unused-value -Wno-unused-parameter \
+-		-Wno-missing-field-initializers \
+-		-fuse-ld=lld
++		-Wno-missing-field-initializers
+ endif
+ 
+ # Make variables (CC, etc...)
+-- 
+2.39.2
+
