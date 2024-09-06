@@ -1,0 +1,31 @@
+From deb5765c9799bd52f10b082400e996036c302038 Mon Sep 17 00:00:00 2001
+From: TheKit <nekit1000@gmail.com>
+Date: Thu, 11 Mar 2021 20:08:30 +0200
+Subject: [PATCH 16/35] vayu_user_defconfig: enable KVM and more binder devices
+
+---
+ arch/arm64/configs/vayu_user_defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index d67bc5508e83..b1e95851fa09 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -689,6 +689,7 @@ CONFIG_F2FS_FS_ENCRYPTION=y
+ CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+ CONFIG_FS_VERITY=y
+ CONFIG_FS_VERITY_BUILTIN_SIGNATURES=y
++CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder,puddlejumper,vndpuddlejumper"
+ CONFIG_QUOTA=y
+ CONFIG_QUOTA_NETLINK_INTERFACE=y
+ CONFIG_QFMT_V2=y
+@@ -873,3 +874,6 @@ CONFIG_WIREGUARD=y
+ CONFIG_RADIO_IRIS=y
+ CONFIG_RADIO_IRIS_TRANSPORT=y
+ 
++CONFIG_VIRTUALIZATION=y
++CONFIG_KVM=y
++
+-- 
+2.39.2
+

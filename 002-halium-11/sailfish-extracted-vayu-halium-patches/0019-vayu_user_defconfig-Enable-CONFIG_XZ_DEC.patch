@@ -1,0 +1,24 @@
+From 44abfc200ea2009baa9cb1f8db71a59836b22b47 Mon Sep 17 00:00:00 2001
+From: Verevka <verevka86@gmail.com>
+Date: Sun, 22 May 2022 19:42:24 +0300
+Subject: [PATCH 19/35] vayu_user_defconfig: Enable CONFIG_XZ_DEC
+
+---
+ arch/arm64/configs/vayu_user_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index a51274ddad08..31192db378e1 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -847,6 +847,7 @@ CONFIG_SQUASHFS_ZLIB=y
+ CONFIG_SQUASHFS_LZ4=y
+ CONFIG_SQUASHFS_LZO=y
+ CONFIG_SQUASHFS_XZ=y
++CONFIG_XZ_DEC=y
+ CONFIG_SQUASHFS_4K_DEVBLK_SIZE=y
+ # CONFIG_SQUASHFS_EMBEDDED is not set
+ CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE=3
+-- 
+2.39.2
+

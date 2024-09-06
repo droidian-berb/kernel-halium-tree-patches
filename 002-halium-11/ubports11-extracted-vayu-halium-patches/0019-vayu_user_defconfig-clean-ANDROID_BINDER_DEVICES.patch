@@ -1,0 +1,26 @@
+From 9ae07f08a3c3b9cfc5c61e7a3355c401a2d4bbd0 Mon Sep 17 00:00:00 2001
+From: Verevka <verevka86@gmail.com>
+Date: Thu, 6 Jan 2022 01:00:04 +0300
+Subject: [PATCH 19/21] vayu_user_defconfig: clean ANDROID_BINDER_DEVICES
+
+Drop puddlejumper,vndpuddlejumper,hwpuddlejumper
+---
+ arch/arm64/configs/vayu_user_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index fba2cc3cbd4e..213fbf41e245 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -701,7 +701,7 @@ CONFIG_F2FS_FS_ENCRYPTION=y
+ CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+ CONFIG_FS_VERITY=y
+ CONFIG_FS_VERITY_BUILTIN_SIGNATURES=y
+-CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder,puddlejumper,vndpuddlejumper,hwpuddlejumper,anbox-binder,anbox-hwbinder,anbox-vndbinder"
++CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder,anbox-binder,anbox-hwbinder,anbox-vndbinder"
+ CONFIG_QUOTA=y
+ CONFIG_QUOTA_NETLINK_INTERFACE=y
+ CONFIG_QFMT_V2=y
+-- 
+2.39.2
+

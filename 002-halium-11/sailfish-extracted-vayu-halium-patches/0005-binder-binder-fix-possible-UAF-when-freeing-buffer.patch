@@ -1,0 +1,49 @@
+From 0c9e924b602b4264df92935828b923f41f236da6 Mon Sep 17 00:00:00 2001
+From: Anurag Chouhan <achouhan@codeaurora.org>
+Date: Fri, 18 Sep 2020 10:36:04 +0530
+Subject: [PATCH 05/35] binder: binder: fix possible UAF when freeing buffer
+
+There is a race between the binder driver cleaning
+up a completed transaction via binder_free_transaction()
+and a user calling binder_ioctl(BC_FREE_BUFFER) to
+release a buffer. It doesn't matter which is first but
+they need to be protected against running concurrently
+which can result in a UAF.
+
+Bug: 133758011
+Change-Id: Ie1426ff3d00218d050d61ff77b333ddf8818b7c9
+Signed-off-by: Todd Kjos <tkjos@google.com>
+Git-commit: 0e1b964ab45ea74a54c988228c777d3b701c265f
+Git-repo: https://android.googlesource.com/kernel/common/
+Signed-off-by: Rahul Shahare <rshaha@codeaurora.org>
+Signed-off-by: Naitik Bharadiya <bharad@codeaurora.org>
+Signed-off-by: Anurag Chouhan <achouhan@codeaurora.org>
+---
+ drivers/android/binder.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 5cc46c615c61..3f8b1f44e139 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -5005,7 +5005,7 @@ static int binder_ioctl_get_freezer_info(
+ 		if (target_proc->pid == info->pid) {
+ 			found = true;
+ 			binder_inner_proc_lock(target_proc);
+-			target_proc->tmp_ref++;
++			atomic_inc(&target_proc->tmp_ref);
+ 			binder_inner_proc_unlock(target_proc);
+ 			break;
+ 		}
+@@ -5157,7 +5157,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			if (target_proc->pid == info.pid) {
+ 				found = true;
+ 				binder_inner_proc_lock(target_proc);
+-				target_proc->tmp_ref++;
++				atomic_inc(&target_proc->tmp_ref);
+ 				binder_inner_proc_unlock(target_proc);
+ 				break;
+ 			}
+-- 
+2.39.2
+

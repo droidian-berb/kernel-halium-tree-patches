@@ -1,0 +1,36 @@
+From 24be906171ccfed68e69284b39a0cb042348436e Mon Sep 17 00:00:00 2001
+From: Marco Ballesio <balejs@google.com>
+Date: Fri, 8 Jan 2021 08:06:32 -0800
+Subject: [PATCH 07/35] binder: don't log on EINTR
+
+binder_wait_for_work used to return -ERESTARTSYS if interrupted by a
+signal. This error wasn't logged to avoid spamming the console. After
+the return value changed to -EINTR to better conform to the kernel API,
+the logging portion wasn't modified.
+
+Filter EINTR from binder error logs.
+
+Test: verified that the console isn't spammed anymore
+Bug: 172330837
+Signed-off-by: Marco Ballesio <balejs@google.com>
+Change-Id: Ie7789bdbf5f0b3b0d55793d4f147c395de2c6641
+---
+ drivers/android/binder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 62dab728511b..cc455f52981f 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -5241,7 +5241,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	if (thread)
+ 		thread->looper_need_return = false;
+ 	wait_event_interruptible(binder_user_error_wait, binder_stop_on_user_error < 2);
+-	if (ret && ret != -ERESTARTSYS)
++	if (ret && ret != -EINTR)
+ 		pr_info("%d:%d ioctl %x %lx returned %d\n", proc->pid, current->pid, cmd, arg, ret);
+ err_unlocked:
+ 	trace_binder_ioctl_done(ret);
+-- 
+2.39.2
+

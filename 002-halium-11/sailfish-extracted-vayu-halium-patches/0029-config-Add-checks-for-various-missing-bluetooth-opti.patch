@@ -1,0 +1,36 @@
+From 7630781ec92b4057f8752104b5a087d3d419839d Mon Sep 17 00:00:00 2001
+From: Verevka <verevka86@gmail.com>
+Date: Wed, 26 Apr 2023 18:32:40 +0300
+Subject: [PATCH 29/35] [config] Add checks for various missing bluetooth
+ options
+
+---
+ arch/arm64/configs/vayu_user_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index 544d5341afc4..6249a3d88f1d 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -793,6 +793,8 @@ CONFIG_FW_LOADER_USER_HELPER=y
+ # hybris flags from Oreo
+ CONFIG_AUTOFS4_FS=y
+ CONFIG_BT_RFCOMM=y
++CONFIG_BT_HCIUART=y
++CONFIG_BT_HCIUART_H4=y
+ CONFIG_CGROUP_DEVICE=y
+ CONFIG_CGROUP_PERF=y
+ CONFIG_CHECKPOINT_RESTORE=y
+@@ -879,6 +881,9 @@ CONFIG_CIFS=y
+ # hybris bluetooth
+ CONFIG_BT_HCIVHCI=y
+ CONFIG_BT_HIDP=y
++CONFIG_BT_BNEP=y
++CONFIG_BT_BNEP_MC_FILTER=y
++CONFIG_BT_BNEP_PROTO_FILTER=y
+ 
+ # hybris binder interfaces
+ CONFIG_ANDROID_BINDER_DEVICES="binder,vndbinder,hwbinder,puddlejumper,vndpuddlejumper,hwpuddlejumper"
+-- 
+2.39.2
+

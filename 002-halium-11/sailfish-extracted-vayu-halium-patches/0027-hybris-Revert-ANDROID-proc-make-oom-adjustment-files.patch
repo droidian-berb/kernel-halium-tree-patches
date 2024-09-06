@@ -1,0 +1,42 @@
+From ccb2bea8507f83b155e748fe14a9711e9f367446 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@jolla.com>
+Date: Wed, 27 Jan 2021 15:21:32 +0200
+Subject: [PATCH 27/35] (hybris) Revert "ANDROID: proc: make oom adjustment
+ files user read-only"
+
+[kernel] Revert "ANDROID: proc: make oom adjustment files user read-only". JB#52911
+
+This reverts commit 7653df7c5e831f7bc847a1a9be52ccb51357b1bf.
+---
+ fs/proc/base.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index a6b0b3a5e9ef..cf2c4cfeb3b3 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3329,8 +3329,8 @@ static const struct pid_entry tgid_base_stuff[] = {
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
+ #endif
+ 	ONE("oom_score",  S_IRUGO, proc_oom_score),
+-	REG("oom_adj",    S_IRUSR, proc_oom_adj_operations),
+-	REG("oom_score_adj", S_IRUSR, proc_oom_score_adj_operations),
++	REG("oom_adj",    S_IRUGO|S_IWUSR, proc_oom_adj_operations),
++	REG("oom_score_adj", S_IRUGO|S_IWUSR, proc_oom_score_adj_operations),
+ #ifdef CONFIG_AUDITSYSCALL
+ 	REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
+ 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
+@@ -3739,8 +3739,8 @@ static const struct pid_entry tid_base_stuff[] = {
+ 	ONE("cgroup",  S_IRUGO, proc_cgroup_show),
+ #endif
+ 	ONE("oom_score", S_IRUGO, proc_oom_score),
+-	REG("oom_adj",   S_IRUSR, proc_oom_adj_operations),
+-	REG("oom_score_adj", S_IRUSR, proc_oom_score_adj_operations),
++	REG("oom_adj",   S_IRUGO|S_IWUSR, proc_oom_adj_operations),
++	REG("oom_score_adj", S_IRUGO|S_IWUSR, proc_oom_score_adj_operations),
+ #ifdef CONFIG_AUDITSYSCALL
+ 	REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
+ 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
+-- 
+2.39.2
+

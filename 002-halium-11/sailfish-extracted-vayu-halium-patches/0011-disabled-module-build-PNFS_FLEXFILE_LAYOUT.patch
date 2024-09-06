@@ -1,0 +1,25 @@
+From 920e3d3ec845696d29a8aca4528dd235343639c4 Mon Sep 17 00:00:00 2001
+From: Verevka <verevka86@gmail.com>
+Date: Wed, 10 Aug 2022 19:53:25 +0300
+Subject: [PATCH 11/35] disabled module build PNFS_FLEXFILE_LAYOUT
+
+---
+ fs/nfs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
+index ac3e06367cb6..96ef378f8e4d 100644
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -127,7 +127,7 @@ config PNFS_BLOCK
+ config PNFS_FLEXFILE_LAYOUT
+ 	tristate
+ 	depends on NFS_V4_1 && NFS_V3
+-	default m
++	default y
+ 
+ config NFS_V4_1_IMPLEMENTATION_ID_DOMAIN
+ 	string "NFSv4.1 Implementation ID Domain"
+-- 
+2.39.2
+

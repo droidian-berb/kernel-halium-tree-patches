@@ -1,0 +1,43 @@
+From cd9a0142f6c82147ccb52f2bee267c323cdf58bb Mon Sep 17 00:00:00 2001
+From: TheKit <nekit1000@gmail.com>
+Date: Thu, 11 Mar 2021 20:08:30 +0200
+Subject: [PATCH 08/21] (halium) vayu_user_defconfig: enable KVM and more
+ binder devices
+
+---
+ arch/arm64/configs/vayu_user_defconfig | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index 1ac5cbc7b229..752195986d84 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -692,6 +692,7 @@ CONFIG_F2FS_FS_ENCRYPTION=y
+ CONFIG_FS_ENCRYPTION_INLINE_CRYPT=y
+ CONFIG_FS_VERITY=y
+ CONFIG_FS_VERITY_BUILTIN_SIGNATURES=y
++CONFIG_ANDROID_BINDER_DEVICES="binder,hwbinder,vndbinder,anbox-binder,anbox-hwbinder,anbox-vndbinder"
+ CONFIG_QUOTA=y
+ CONFIG_QUOTA_NETLINK_INTERFACE=y
+ CONFIG_QFMT_V2=y
+@@ -710,6 +711,8 @@ CONFIG_ECRYPT_FS_MESSAGING=y
+ CONFIG_SDCARD_FS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
++CONFIG_VIRTUALIZATION=y
++CONFIG_KVM=y
+ CONFIG_PRINTK_TIME=y
+ CONFIG_DISABLE_TRACE_PRINTK=y
+ CONFIG_DYNAMIC_DEBUG=y
+@@ -898,7 +901,7 @@ CONFIG_SIGNALFD=y
+ CONFIG_TIMERFD=y
+ # CONFIG_CGROUP_SCHEDTUNE is not set
+ # CONFIG_NETPRIO_CGROUP is not set
+-# CONFIG_NET_CLS_CGROUP is not set
++CONFIG_NET_CLS_CGROUP=y
+ # CONFIG_FW_LOADER_USER_HELPER is not set
+ # CONFIG_ANDROID_PARANOID_NETWORK is not set
+ # CONFIG_USB_CONFIGFS_QCRNDIS is not set
+-- 
+2.39.2
+

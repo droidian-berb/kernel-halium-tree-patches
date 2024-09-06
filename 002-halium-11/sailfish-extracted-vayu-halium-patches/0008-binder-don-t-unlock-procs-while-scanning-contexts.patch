@@ -1,0 +1,101 @@
+From aa68c18c82e482c7d8cef953f45f8092ba41180e Mon Sep 17 00:00:00 2001
+From: Marco Ballesio <balejs@google.com>
+Date: Fri, 22 Jan 2021 09:26:14 -0800
+Subject: [PATCH 08/35] binder: don't unlock procs while scanning contexts
+
+Releasing the procs lock while freezing a binder context allows for
+other processes to modify the process list while the scan is still
+ongoing.
+
+Don't release the process locks during the scan operatoin, but store
+matching processes in a dynamic array and process them at a later phase.
+
+Signed-off-by: Marco Ballesio <balejs@google.com>
+Bug: 176996063
+Test: verified that all contexts are correctly frozen and unfrozen
+Change-Id: Iea527e3b9188b04303f8b9b08b404e0c062a0189
+---
+ drivers/android/binder.c | 54 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 41 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index cc455f52981f..dc8d0fba1bce 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -5184,32 +5184,60 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	}
+ 	case BINDER_FREEZE: {
+ 		struct binder_freeze_info info;
+-		struct binder_proc *target_proc;
+-		ret = -EINVAL;
++		struct binder_proc **target_procs = NULL, *target_proc;
++		int target_procs_count = 0, i = 0;
++
++		ret = 0;
+ 
+ 		if (copy_from_user(&info, ubuf, sizeof(info))) {
+ 			ret = -EFAULT;
+ 			goto err;
+ 		}
++
+ 		mutex_lock(&binder_procs_lock);
+ 		hlist_for_each_entry(target_proc, &binder_procs, proc_node) {
+-			if (target_proc->pid == info.pid) {
+-				binder_inner_proc_lock(target_proc);
+-				atomic_inc(&target_proc->tmp_ref);
+-				binder_inner_proc_unlock(target_proc);
++			if (target_proc->pid == info.pid)
++				target_procs_count++;
++		}
+ 
+-				mutex_unlock(&binder_procs_lock);
+-				ret = binder_ioctl_freeze(&info, target_proc);
+-				mutex_lock(&binder_procs_lock);
++		if (target_procs_count == 0) {
++			mutex_unlock(&binder_procs_lock);
++			ret = -EINVAL;
++			goto err;
++		}
+ 
+-				binder_proc_dec_tmpref(target_proc);
++		target_procs = kmalloc(sizeof(struct binder_proc *) *
++					       target_procs_count,
++				       GFP_KERNEL);
+ 
+-				if (ret < 0)
+-					break;
+-			}
++		if (!target_procs) {
++			mutex_unlock(&binder_procs_lock);
++			ret = -ENOMEM;
++			goto err;
++		}
++
++		hlist_for_each_entry(target_proc, &binder_procs, proc_node) {
++			if (target_proc->pid != info.pid)
++				continue;
++
++			binder_inner_proc_lock(target_proc);
++			atomic_inc(&target_proc->tmp_ref);
++			binder_inner_proc_unlock(target_proc);
++
++			target_procs[i++] = target_proc;
+ 		}
+ 		mutex_unlock(&binder_procs_lock);
+ 
++		for (i = 0; i < target_procs_count; i++) {
++			if (ret >= 0)
++				ret = binder_ioctl_freeze(&info,
++							  target_procs[i]);
++
++			binder_proc_dec_tmpref(target_procs[i]);
++		}
++
++		kfree(target_procs);
++
+ 		if (ret < 0)
+ 			goto err;
+ 		break;
+-- 
+2.39.2
+

@@ -1,0 +1,33 @@
+From 17d0d76f93318427004bcd17f06498b5dbe510ab Mon Sep 17 00:00:00 2001
+From: Verevka <verevka86@gmail.com>
+Date: Wed, 5 Jan 2022 18:46:36 +0300
+Subject: [PATCH 17/21] vayu_user_defconfig: add more SQUASHFS configs
+
+---
+ arch/arm64/configs/vayu_user_defconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index 2d62492d6ace..cb115858bb86 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -964,13 +964,13 @@ CONFIG_DEFAULT_SECURITY_APPARMOR=y
+ 
+ CONFIG_SQUASHFS=y
+ CONFIG_SQUASHFS_DECOMP_SINGLE=y
+-# CONFIG_SQUASHFS_DECOMP_MULTI is not set
++CONFIG_SQUASHFS_DECOMP_MULTI=y
+ CONFIG_SQUASHFS_XATTR=y
+ CONFIG_SQUASHFS_ZLIB=y
+-# CONFIG_SQUASHFS_LZ4 is not set
++CONFIG_SQUASHFS_LZ4=y
+ CONFIG_SQUASHFS_LZO=y
+ CONFIG_SQUASHFS_XZ=y
+-# CONFIG_SQUASHFS_4K_DEVBLK_SIZE is not set
++CONFIG_SQUASHFS_4K_DEVBLK_SIZE=y
+ # CONFIG_SQUASHFS_EMBEDDED is not set
+ CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE=3
+ CONFIG_SQUASHFS_FILE_DIRECT=y
+-- 
+2.39.2
+

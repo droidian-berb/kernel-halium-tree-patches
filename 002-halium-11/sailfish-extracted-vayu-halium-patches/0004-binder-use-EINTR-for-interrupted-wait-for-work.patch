@@ -1,0 +1,36 @@
+From 03d6a3d354c9952ae3eba1cb03aed6943a68c978 Mon Sep 17 00:00:00 2001
+From: Marco Ballesio <balejs@google.com>
+Date: Wed, 16 Sep 2020 09:46:36 -0700
+Subject: [PATCH 04/35] binder: use EINTR for interrupted wait for work
+
+when interrupted by a signal, binder_wait_for_work currently returns
+-ERESTARTSYS. This error code is usually restricted to the kernel.
+
+Replace this instance of -ERESTARTSYS with -EINTR.
+
+Bug: 143717177
+Test: built, booted, interrupted a worker thread within
+binder_wait_for_work
+Signed-off-by: Marco Ballesio <balejs@google.com>
+
+Change-Id: I0bd1be173e0a75c917399b773046e819babb9d4b
+---
+ drivers/android/binder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 11ea8069d98e..5cc46c615c61 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -4189,7 +4189,7 @@ static int binder_wait_for_work(struct binder_thread *thread,
+ 		binder_inner_proc_lock(proc);
+ 		list_del_init(&thread->waiting_thread_node);
+ 		if (signal_pending(current)) {
+-			ret = -ERESTARTSYS;
++			ret = -EINTR;
+ 			break;
+ 		}
+ 	}
+-- 
+2.39.2
+

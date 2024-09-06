@@ -1,0 +1,22 @@
+From 3ed3b72f4e0cea8bb4c4026a16b87f1c311dbc6e Mon Sep 17 00:00:00 2001
+From: Verevka <verevka86@gmail.com>
+Date: Wed, 1 Jun 2022 09:35:12 +0300
+Subject: [PATCH 21/35] vayu_user_defconfig: Enable CONFIG_BINFMT_MISC
+
+---
+ arch/arm64/configs/vayu_user_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index fa005e995130..20352a8752d3 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -909,4 +909,5 @@ CONFIG_CGROUP_NET_PRIO=y
+ CONFIG_CGROUP_NET_CLASSID=y
+ CONFIG_NET_SCH_FQ_CODEL=y
+ CONFIG_BPF=y
++CONFIG_BINFMT_MISC=y
+ 
+-- 
+2.39.2
+

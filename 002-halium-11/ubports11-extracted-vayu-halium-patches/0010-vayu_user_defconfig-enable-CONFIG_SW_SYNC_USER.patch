@@ -1,0 +1,26 @@
+From 59c1a224811fca269ef2153e26a81a089e4f4abf Mon Sep 17 00:00:00 2001
+From: verevka <verevka86@gmail.com>
+Date: Sun, 12 Sep 2021 14:59:41 +0300
+Subject: [PATCH 10/21] vayu_user_defconfig: enable CONFIG_SW_SYNC_USER
+
+---
+ arch/arm64/configs/vayu_user_defconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index a699ab98cb02..2845fa69c284 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -1009,3 +1009,9 @@ CONFIG_CGROUP_NET_PRIO=y
+ CONFIG_IP6_NF_TARGET_MASQUERADE=y 
+ CONFIG_NF_NAT_IPV6=y
+ CONFIG_NF_NAT_IPV4=y
++
++CONFIG_SYNC=y
++CONFIG_SW_SYNC=y
++CONFIG_SW_SYNC_USER=y
++CONFIG_ONESHOT_SYNC=y
++
+-- 
+2.39.2
+

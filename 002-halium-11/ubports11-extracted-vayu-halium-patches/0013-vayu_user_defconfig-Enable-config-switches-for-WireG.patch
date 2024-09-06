@@ -1,0 +1,27 @@
+From 3f036773993b555847ac068c09ff34c75a34bb51 Mon Sep 17 00:00:00 2001
+From: Alfred Neumayer <dev.beidl@gmail.com>
+Date: Thu, 30 Sep 2021 20:22:29 +0200
+Subject: [PATCH 13/21] vayu_user_defconfig: Enable config switches for
+ WireGuard
+
+This enables the in-tree WireGuard driver to be used
+using 'sudo ip link add test_wg0 type wireguard'.
+---
+ arch/arm64/configs/vayu_user_defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index e3e69b33e373..2d62492d6ace 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -1015,3 +1015,7 @@ CONFIG_SW_SYNC=y
+ CONFIG_SW_SYNC_USER=y
+ CONFIG_ONESHOT_SYNC=y
+ 
++CONFIG_NET_UDP_TUNNEL=y
++CONFIG_CRYPTO_ALGAPI=y
++CONFIG_WIREGUARD=y
++
+-- 
+2.39.2
+

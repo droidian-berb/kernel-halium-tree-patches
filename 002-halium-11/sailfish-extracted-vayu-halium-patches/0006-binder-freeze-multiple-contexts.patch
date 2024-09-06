@@ -1,0 +1,184 @@
+From e90582604acd7fc9f10c58e7b1aaa8d03f78ae3f Mon Sep 17 00:00:00 2001
+From: Marco Ballesio <balejs@google.com>
+Date: Thu, 7 Jan 2021 17:02:50 -0800
+Subject: [PATCH 06/35] binder: freeze multiple contexts
+
+binder freeze stops at the first context found for any pid, but
+multiple ones are possible with the result that a process might end
+up with inconsistent context states after freezing or unfreezing its
+binder.
+
+Freeze or unfreeze all contexts in a process upon a BINDER_FREEZE
+ioctl.
+
+Bug: 176996063
+Test: verified that all contexts in a specific process with multiple
+binders are frozen or unfrozen.
+Signed-off-by: Marco Ballesio <balejs@google.com>
+
+Change-Id: If0822e078e830e9fde10cc17b99e39ec7cf358d5
+---
+ drivers/android/binder.c | 108 +++++++++++++++++++++------------------
+ 1 file changed, 59 insertions(+), 49 deletions(-)
+
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 3f8b1f44e139..62dab728511b 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -4994,20 +4994,66 @@ static int binder_ioctl_get_node_debug_info(struct binder_proc *proc,
+ 	return 0;
+ }
+ 
++static int binder_ioctl_freeze(struct binder_freeze_info *info,
++			       struct binder_proc *target_proc)
++{
++	int ret = 0;
++
++	if (!info->enable) {
++		binder_inner_proc_lock(target_proc);
++		target_proc->sync_recv = false;
++		target_proc->async_recv = false;
++		target_proc->is_frozen = false;
++		binder_inner_proc_unlock(target_proc);
++		return 0;
++	}
++
++	/*
++	 * Freezing the target. Prevent new transactions by
++	 * setting frozen state. If timeout specified, wait
++	 * for transactions to drain.
++	 */
++	binder_inner_proc_lock(target_proc);
++	target_proc->sync_recv = false;
++	target_proc->async_recv = false;
++	target_proc->is_frozen = true;
++	binder_inner_proc_unlock(target_proc);
++
++	if (info->timeout_ms > 0)
++		ret = wait_event_interruptible_timeout(
++			target_proc->freeze_wait,
++			(!target_proc->outstanding_txns),
++			msecs_to_jiffies(info->timeout_ms));
++
++	if (!ret && target_proc->outstanding_txns)
++		ret = -EAGAIN;
++
++	if (ret < 0) {
++		binder_inner_proc_lock(target_proc);
++		target_proc->is_frozen = false;
++		binder_inner_proc_unlock(target_proc);
++	}
++
++	return ret;
++}
++
+ static int binder_ioctl_get_freezer_info(
+ 				struct binder_frozen_status_info *info)
+ {
+ 	struct binder_proc *target_proc;
+ 	bool found = false;
+ 
++	info->sync_recv = 0;
++	info->async_recv = 0;
++
+ 	mutex_lock(&binder_procs_lock);
+ 	hlist_for_each_entry(target_proc, &binder_procs, proc_node) {
+ 		if (target_proc->pid == info->pid) {
+ 			found = true;
+ 			binder_inner_proc_lock(target_proc);
+-			atomic_inc(&target_proc->tmp_ref);
++			info->sync_recv |= target_proc->sync_recv;
++			info->async_recv |= target_proc->async_recv;
+ 			binder_inner_proc_unlock(target_proc);
+-			break;
+ 		}
+ 	}
+ 	mutex_unlock(&binder_procs_lock);
+@@ -5015,13 +5061,6 @@ static int binder_ioctl_get_freezer_info(
+ 	if (!found)
+ 		return -EINVAL;
+ 
+-	binder_inner_proc_lock(target_proc);
+-	info->sync_recv = target_proc->sync_recv;
+-	info->async_recv = target_proc->async_recv;
+-	binder_inner_proc_unlock(target_proc);
+-
+-	binder_proc_dec_tmpref(target_proc);
+-
+ 	return 0;
+ }
+ 
+@@ -5146,7 +5185,7 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	case BINDER_FREEZE: {
+ 		struct binder_freeze_info info;
+ 		struct binder_proc *target_proc;
+-		bool found = false;
++		ret = -EINVAL;
+ 
+ 		if (copy_from_user(&info, ubuf, sizeof(info))) {
+ 			ret = -EFAULT;
+@@ -5155,51 +5194,22 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		mutex_lock(&binder_procs_lock);
+ 		hlist_for_each_entry(target_proc, &binder_procs, proc_node) {
+ 			if (target_proc->pid == info.pid) {
+-				found = true;
+ 				binder_inner_proc_lock(target_proc);
+ 				atomic_inc(&target_proc->tmp_ref);
+ 				binder_inner_proc_unlock(target_proc);
+-				break;
++
++				mutex_unlock(&binder_procs_lock);
++				ret = binder_ioctl_freeze(&info, target_proc);
++				mutex_lock(&binder_procs_lock);
++
++				binder_proc_dec_tmpref(target_proc);
++
++				if (ret < 0)
++					break;
+ 			}
+ 		}
+ 		mutex_unlock(&binder_procs_lock);
+-		if (!found) {
+-			ret = -EINVAL;
+-			goto err;
+-		}
+-		if (!info.enable) {
+-			binder_inner_proc_lock(target_proc);
+-			target_proc->sync_recv = false;
+-			target_proc->async_recv = false;
+-			target_proc->is_frozen = false;
+-			binder_inner_proc_unlock(target_proc);
+-			binder_proc_dec_tmpref(target_proc);
+-			break;
+-		}
+-		/*
+-		 * Freezing the target. Prevent new transactions by
+-		 * setting frozen state. If timeout specified, wait
+-		 * for transactions to drain.
+-		 */
+-		binder_inner_proc_lock(target_proc);
+-		target_proc->sync_recv = false;
+-		target_proc->async_recv = false;
+-		target_proc->is_frozen = true;
+-		binder_inner_proc_unlock(target_proc);
+-		if (info.timeout_ms > 0)
+-			ret = wait_event_interruptible_timeout(
+-				target_proc->freeze_wait,
+-				(!target_proc->outstanding_txns),
+-				msecs_to_jiffies(info.timeout_ms));
+-		if (!ret && target_proc->outstanding_txns) {
+-			ret = -EAGAIN;
+-		}
+-		if (ret < 0) {
+-			binder_inner_proc_lock(target_proc);
+-			target_proc->is_frozen = false;
+-			binder_inner_proc_unlock(target_proc);
+-		}
+-		binder_proc_dec_tmpref(target_proc);
++
+ 		if (ret < 0)
+ 			goto err;
+ 		break;
+-- 
+2.39.2
+

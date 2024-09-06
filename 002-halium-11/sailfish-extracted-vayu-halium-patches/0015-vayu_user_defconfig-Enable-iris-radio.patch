@@ -1,0 +1,25 @@
+From 41c2cfe0c985107f49e192584b627db3630be6d4 Mon Sep 17 00:00:00 2001
+From: Verevka <verevka86@gmail.com>
+Date: Thu, 20 Jan 2022 10:20:40 +0300
+Subject: [PATCH 15/35] vayu_user_defconfig: Enable iris radio
+
+---
+ arch/arm64/configs/vayu_user_defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/configs/vayu_user_defconfig b/arch/arm64/configs/vayu_user_defconfig
+index f7fecdf4a0d7..d67bc5508e83 100644
+--- a/arch/arm64/configs/vayu_user_defconfig
++++ b/arch/arm64/configs/vayu_user_defconfig
+@@ -868,3 +868,8 @@ CONFIG_PM_AUTOSLEEP=y
+ CONFIG_NET_UDP_TUNNEL=y
+ CONFIG_CRYPTO_ALGAPI=y
+ CONFIG_WIREGUARD=y
++
++# FM Radio
++CONFIG_RADIO_IRIS=y
++CONFIG_RADIO_IRIS_TRANSPORT=y
++
+-- 
+2.39.2
+
