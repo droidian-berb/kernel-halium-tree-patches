@@ -1,0 +1,31 @@
+From f9352092eea00b83bd32df79bb9311adecc04ce1 Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Sun, 1 Sep 2024 12:44:44 +0200
+Subject: [PATCH] (compiler) warning: ln8000_charger.c:1414:12 smaller integer
+
+Fix: Change type to uintptr_t
+
+Warnings:
+/buildd/sources/drivers/power/supply/ti/ln8000_charger.c:1414:12: warning: cast to smaller integer type 'int' from 'const void *' [-Wvoid-pointer-to-int-cast]
+    return (int)of_id->data;
+           ^~~~~~~~~~~~~~~~
+---
+ drivers/power/supply/ti/ln8000_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/ti/ln8000_charger.c b/drivers/power/supply/ti/ln8000_charger.c
+index 2808f0b42dc3..d304a31a9091 100644
+--- a/drivers/power/supply/ti/ln8000_charger.c
++++ b/drivers/power/supply/ti/ln8000_charger.c
+@@ -1411,7 +1411,7 @@ static int ln8000_get_dev_role(struct i2c_client *client)
+ 
+     dev_info(&client->dev,"%s: matched to %s\n", __func__, of_id->compatible);
+ 
+-    return (int)of_id->data;
++    return (uintptr_t)of_id->data;
+ }
+ 
+ static int ln8000_parse_dt(struct ln8000_info *info)
+-- 
+2.39.2
+

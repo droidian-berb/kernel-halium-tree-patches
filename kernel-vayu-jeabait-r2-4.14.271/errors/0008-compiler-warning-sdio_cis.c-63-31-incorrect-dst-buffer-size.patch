@@ -1,0 +1,46 @@
+From 876735508afbd0926e950c46136f7cd03d45fd68 Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Sun, 1 Sep 2024 16:31:44 +0200
+Subject: [PATCH] (compiler) warning: sdio_cis.c:63:31 incorrect soruce buffer
+ size as dest buffer size
+
+Fix: define the dest fuffer size
+
+Warnings:
+/buildd/sources/drivers/mmc/core/sdio_cis.c:63:31: warning: size argument in 'strlcpy' call appears to be size of the source; expected the size of the destination [-Wstrlcpy-strlcat-size]
+                strlcpy(string, buf, strlen(buf) + 1);
+                                     ~~~~~~~^~~~~~~~
+---
+ drivers/mmc/core/sdio_cis.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mmc/core/sdio_cis.c b/drivers/mmc/core/sdio_cis.c
+index 9aee0d35a917..e71a33043e65 100644
+--- a/drivers/mmc/core/sdio_cis.c
++++ b/drivers/mmc/core/sdio_cis.c
+@@ -58,11 +58,19 @@ static int cistpl_vers_1(struct mmc_card *card, struct sdio_func *func,
+ 
+ 	string = (char*)(buffer + nr_strings);
+ 
++	size_t string_size = sizeof(buffer) - sizeof(char*) * nr_strings;  // available zize for `string`
++
+ 	for (i = 0; i < nr_strings; i++) {
+ 		buffer[i] = string;
+-		strlcpy(string, buf, strlen(buf) + 1);
+-		string += strlen(string) + 1;
+-		buf += strlen(buf) + 1;
++		size_t len = strlen(buf) + 1;
++		if (len > string_size) {
++			// error
++			return -ENOMEM;
++	}
++	// use same source size in dest buffer
++	strlcpy(string, buf, len);
++	string += len;
++	buf += len;
+ 	}
+ 
+ 	if (func) {
+-- 
+2.39.2
+

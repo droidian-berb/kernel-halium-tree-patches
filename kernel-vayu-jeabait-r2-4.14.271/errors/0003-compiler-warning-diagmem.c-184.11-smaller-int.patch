@@ -1,0 +1,31 @@
+From d0ac68dd6bdf948182afdcbaeda124a087251488 Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Tue, 20 Aug 2024 09:11:00 +0200
+Subject: [PATCH] (compiler warning: diagmem.c-184.11 smaller int
+
+Fixes next error:
+
+/buildd/sources/drivers/char/diag/diagmem.c:184:11: warning: cast to smaller integer type 'int' from 'void *' [-Wvoid-pointer-to-int-cast]
+                        size > (int)mempool->pool->pool_data) {
+                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+---
+ drivers/char/diag/diagmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/diag/diagmem.c b/drivers/char/diag/diagmem.c
+index 21d8c12fbf0c..890df7daaccd 100644
+--- a/drivers/char/diag/diagmem.c
++++ b/drivers/char/diag/diagmem.c
+@@ -181,7 +181,7 @@ void *diagmem_alloc(struct diagchar_dev *driver, int size, int pool_type)
+ 			break;
+ 		}
+ 		if (size == 0 || size > mempool->itemsize ||
+-			size > (int)mempool->pool->pool_data) {
++			size > (uintptr_t)mempool->pool->pool_data) {
+ 			pr_err_ratelimited("diag: cannot alloc from mempool %s, invalid size: %d\n",
+ 					   mempool->name, size);
+ 			break;
+-- 
+2.39.2
+

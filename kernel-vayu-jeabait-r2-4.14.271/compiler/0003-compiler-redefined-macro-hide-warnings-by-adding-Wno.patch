@@ -1,0 +1,27 @@
+From b3965cab5f37ecc710d7ed541fbb03fc6f0f9847 Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Sun, 1 Sep 2024 15:35:14 +0200
+Subject: [PATCH 3/6] (compiler) redefined-macro: hide warnings by adding
+ -Wno-macro-redefined to KBUILD_CFLAGS in Makefile
+
+---
+ Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 2f8fab2496ce..d74ee7424cd3 100644
+--- a/Makefile
++++ b/Makefile
+@@ -429,7 +429,8 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -pipe \
+ 		   -Wno-unused-variable \
+ 		   -Wno-unused-label \
+ 		   -Wno-unused-function \
+-		   -Wdeclaration-after-statement
++		   -Wdeclaration-after-statement \
++		   -Wno-macro-redefined
+ 
+ ifeq ($(TARGET_BOARD_TYPE),auto)
+ KBUILD_CFLAGS    += -DCONFIG_PLATFORM_AUTO
+-- 
+2.39.2
+

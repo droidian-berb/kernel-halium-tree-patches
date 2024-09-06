@@ -1,0 +1,27 @@
+From 615b3705177c259d1d4efa6588d88a21238c4f23 Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Sun, 1 Sep 2024 15:11:55 +0200
+Subject: [PATCH 2/6] (compiler) -Wdeclaration-after-statement: hide adding to
+ KBUILD_CFLAGS in Makefile
+
+---
+ Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 661d5cc17bee..2f8fab2496ce 100644
+--- a/Makefile
++++ b/Makefile
+@@ -428,7 +428,8 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -pipe \
+ 		   -std=gnu89 \
+ 		   -Wno-unused-variable \
+ 		   -Wno-unused-label \
+-		   -Wno-unused-function
++		   -Wno-unused-function \
++		   -Wdeclaration-after-statement
+ 
+ ifeq ($(TARGET_BOARD_TYPE),auto)
+ KBUILD_CFLAGS    += -DCONFIG_PLATFORM_AUTO
+-- 
+2.39.2
+

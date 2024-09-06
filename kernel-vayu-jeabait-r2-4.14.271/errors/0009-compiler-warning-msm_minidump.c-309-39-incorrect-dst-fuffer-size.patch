@@ -1,0 +1,35 @@
+From cba7e06c26308aaaefe31803b6197e4896623c12 Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Sun, 1 Sep 2024 17:37:56 +0200
+Subject: [PATCH] (compiler) warning: msm_minidump.c:309:39 incorrect soruce
+ buffer size as dest buffer size
+
+Fix: define the dest fuffer size
+
+Warnings:
+/buildd/sources/drivers/soc/qcom/msm_minidump.c:309:39: warning: size argument in 'strlcpy' call appears to be size of the source; expected the size of the destination [-Wstrlcpy-strlcat-size]
+        strlcpy(banner, linux_banner, strlen(linux_banner) + 1);
+                                      ~~~~~~~^~~~~~~~~~~~~~~~~
+---
+ drivers/soc/qcom/msm_minidump.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/qcom/msm_minidump.c b/drivers/soc/qcom/msm_minidump.c
+index acd3d71a7a28..a390267d8e56 100644
+--- a/drivers/soc/qcom/msm_minidump.c
++++ b/drivers/soc/qcom/msm_minidump.c
+@@ -305,8 +305,10 @@ static int msm_minidump_add_header(void)
+ 	shdr++;
+ 
+ 	/* 4th section is linux banner */
++	#define MAX_BANNER_SIZE 256
++
+ 	banner = (char *)ehdr + strtbl_off + MAX_STRTBL_SIZE;
+-	strlcpy(banner, linux_banner, strlen(linux_banner) + 1);
++	strlcpy(banner, linux_banner, MAX_BANNER_SIZE);
+ 
+ 	shdr->sh_type = SHT_PROGBITS;
+ 	shdr->sh_offset = (elf_addr_t)(strtbl_off + MAX_STRTBL_SIZE);
+-- 
+2.39.2
+

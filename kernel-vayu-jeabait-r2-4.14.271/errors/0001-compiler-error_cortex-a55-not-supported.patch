@@ -1,0 +1,27 @@
+From cdcab0bb590f5f937d5acfbcade42989781e6868 Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Sun, 1 Sep 2024 00:29:16 +0200
+Subject: [PATCH] (compiler) error: cortex-a55 not supported
+
+Fix: replace -mcpu=cortex-a55 with -march=armv8.2-a
+in the Makefile
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 710270457f0b..24c298171b6c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -728,7 +728,7 @@ ifeq ($(cc-name),gcc)
+ KBUILD_CFLAGS	+= -mcpu=cortex-a76.cortex-a55 -mtune=cortex-a76.cortex-a55
+ endif
+ ifeq ($(cc-name),clang)
+-KBUILD_CFLAGS	+= -mcpu=cortex-a55 -mtune=cortex-a55
++KBUILD_CFLAGS	+= -march=armv8.2-a -mtune=cortex-a55
+ 
+ ifdef CONFIG_LLVM_POLLY
+ KBUILD_CFLAGS	+= -mllvm -polly \
+-- 
+2.39.2
+

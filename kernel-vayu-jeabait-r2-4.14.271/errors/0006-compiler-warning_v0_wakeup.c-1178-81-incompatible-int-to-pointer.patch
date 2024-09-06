@@ -1,0 +1,37 @@
+From 69e54b66ba2b45ca5bd8fc06a366bc80ac814aff Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Sun, 1 Sep 2024 13:17:27 +0200
+Subject: [PATCH] (compiler) warning: /wakeup.c:1178:81 incompatible integer to
+ pointer conversion
+
+Fix: UNTESTED v0: Create a dbgfs_marker_value = 1 int var
+and use it in the debugfs_create_file call
+
+Warnings:
+/buildd/sources/drivers/base/power/wakeup.c:1178:81: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'void *' [-Wint-conversion]
+        debugfs_create_file("trace_marker", 0220, debugfs_create_dir("tracing", NULL), 1, NULL);
+
+/buildd/sources/include/linux/debugfs.h:67:37: note: passing argument to parameter 'data' here
+                                   struct dentry *parent, void *data,
+2 warning generated
+---
+ drivers/base/power/wakeup.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+index 5a20de6794b4..e2e3013765c9 100644
+--- a/drivers/base/power/wakeup.c
++++ b/drivers/base/power/wakeup.c
+@@ -1175,7 +1175,8 @@ static int __init wakeup_sources_debugfs_init(void)
+ {
+ 	wakeup_sources_stats_dentry = debugfs_create_file("wakeup_sources",
+ 			S_IRUGO, NULL, NULL, &wakeup_sources_stats_fops);
+-	debugfs_create_file("trace_marker", 0220, debugfs_create_dir("tracing", NULL), 1, NULL);
++	int dbgfs_marker_value = 1;
++	debugfs_create_file("trace_marker", 0220, debugfs_create_dir("tracing", NULL), &dbgfs_marker_value, NULL);
+ 	return 0;
+ }
+ 
+-- 
+2.39.2
+

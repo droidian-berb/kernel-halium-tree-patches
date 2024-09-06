@@ -1,0 +1,54 @@
+From 3631f0d03ca304b537caf4c8c8c06719c7de1f5f Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Sun, 1 Sep 2024 16:19:31 +0200
+Subject: [PATCH] (compiler) warning: onewire_gpio.c:461:84 smaller integer
+
+Fix: change uint32_t to uintptr_t
+
+Warnings:
+/buildd/sources/drivers/power/supply/maxim/onewire_gpio.c:461:84: warning: cast to smaller integer type 'uint32_t' (aka 'unsigned int') from 'void *' [-Wvoid-pointer-to-int-cast]
+        ow_log("onewire_data->gpio_cfg66_reg is %x; onewire_data->gpio_in_out_reg is %x", (uint32_t)(onewire_data->gpio_cfg66_reg), (uint32_t)(onewire_data->gpio_in_out_reg));
+                                                                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/buildd/sources/drivers/power/supply/maxim/onewire_gpio.c:27:16: note: expanded from macro 'ow_log'
+#define ow_log  pr_err
+                ^
+/buildd/sources/include/linux/printk.h:306:33: note: expanded from macro 'pr_err'
+        printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+                                       ^~~~~~~~~~~
+/buildd/sources/drivers/power/supply/maxim/onewire_gpio.c:461:126: warning: cast to smaller integer type 'uint32_t' (aka 'unsigned int') from 'void *' [-Wvoid-pointer-to-int-cast]
+        ow_log("onewire_data->gpio_cfg66_reg is %x; onewire_data->gpio_in_out_reg is %x", (uint32_t)(onewire_data->gpio_cfg66_reg), (uint32_t)(onewire_data->gpio_in_out_reg));
+
+                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/buildd/sources/drivers/power/supply/maxim/onewire_gpio.c:27:16: note: expanded from macro 'ow_log'
+#define ow_log  pr_err
+                ^
+/buildd/sources/include/linux/printk.h:306:33: note: expanded from macro 'pr_err'
+        printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+                                       ^~~~~~~~~~~
+---
+ drivers/power/supply/maxim/onewire_gpio.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/power/supply/maxim/onewire_gpio.c b/drivers/power/supply/maxim/onewire_gpio.c
+index 96fae8cfe52c..49e448041506 100644
+--- a/drivers/power/supply/maxim/onewire_gpio.c
++++ b/drivers/power/supply/maxim/onewire_gpio.c
+@@ -454,11 +454,11 @@ static int onewire_gpio_probe(struct platform_device *pdev)
+ 	onewire_data->ow_gpio_chip = gpiod_to_chip(onewire_data->ow_gpio_desc);
+ 
+ 	onewire_data->gpio_in_out_reg = devm_ioremap(&pdev->dev,
+-					(uint32_t)onewire_data->onewire_gpio_level_addr, 0x4);
++					(uintptr_t)onewire_data->onewire_gpio_level_addr, 0x4);
+ 	onewire_data->gpio_cfg66_reg = devm_ioremap(&pdev->dev,
+-					(uint32_t)onewire_data->onewire_gpio_cfg_addr, 0x4);
+-	ow_log("onewire_gpio_level_addr is %x; onewire_gpio_cfg_addr is %x", (uint32_t)(onewire_data->onewire_gpio_level_addr), (uint32_t)(onewire_data->onewire_gpio_cfg_addr));
+-	ow_log("onewire_data->gpio_cfg66_reg is %x; onewire_data->gpio_in_out_reg is %x", (uint32_t)(onewire_data->gpio_cfg66_reg), (uint32_t)(onewire_data->gpio_in_out_reg));
++					(uintptr_t)onewire_data->onewire_gpio_cfg_addr, 0x4);
++	ow_log("onewire_gpio_level_addr is %x; onewire_gpio_cfg_addr is %x", (uintptr_t)(onewire_data->onewire_gpio_level_addr), (uintptr_t)(onewire_data->onewire_gpio_cfg_addr));
++	ow_log("onewire_data->gpio_cfg66_reg is %x; onewire_data->gpio_in_out_reg is %x", (uintptr_t)(onewire_data->gpio_cfg66_reg), (uintptr_t)(onewire_data->gpio_in_out_reg));
+ 
+ 	// create device node
+ 	onewire_data->dev = device_create(onewire_class,
+-- 
+2.39.2
+
