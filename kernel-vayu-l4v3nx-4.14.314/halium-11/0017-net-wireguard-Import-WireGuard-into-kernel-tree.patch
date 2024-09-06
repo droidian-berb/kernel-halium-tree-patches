@@ -257,7 +257,7 @@ index 506f8f2e6c3a..da0ca8d72c31 100644
  	  Short answer: say Y.
  
  if INET
-+source "net/wireguard/src/Kconfig"
++source "net/wireguard/Kconfig"
  source "net/ipv4/Kconfig"
  source "net/ipv6/Kconfig"
  source "net/netlabel/Kconfig"
