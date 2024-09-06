@@ -1,0 +1,25 @@
+From 953a9a9c87d999416b49323ab4a99ef76138366d Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Fri, 6 Sep 2024 11:37:30 +0200
+Subject: [PATCH 2/5] (droidian) kernel-info: set the main defconfig file name
+
+---
+ debian/kernel-info.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/debian/kernel-info.mk b/debian/kernel-info.mk
+index 95834e9f0a04..640d67b1daf5 100644
+--- a/debian/kernel-info.mk
++++ b/debian/kernel-info.mk
+@@ -48,7 +48,7 @@ KERNEL_CONFIG_USE_DIFFCONFIG = 0
+ # KERNEL_PRODUCT_DIFFCONFIG = my_diffconfig
+ 
+ # Defconfig to use
+-KERNEL_DEFCONFIG = vayu_user_defconfig
++KERNEL_DEFCONFIG = vayu_defconfig
+ 
+ # Whether to include DTBs with the image. Use 0 (no) or 1.
+ # GKI devices should set this to 0
+-- 
+2.39.2
+

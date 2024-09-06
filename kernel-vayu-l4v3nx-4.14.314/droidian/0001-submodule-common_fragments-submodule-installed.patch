@@ -1,0 +1,32 @@
+From a464374d50f2d40e7c30f09fbdbefcf03d7fe98d Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Fri, 6 Sep 2024 11:31:35 +0200
+Subject: [PATCH 1/5] (submodule) common_fragments: submodule installed
+
+---
+ .gitmodules               | 4 ++++
+ droidian/common_fragments | 1 +
+ 2 files changed, 5 insertions(+)
+ create mode 100644 .gitmodules
+ create mode 160000 droidian/common_fragments
+
+diff --git a/.gitmodules b/.gitmodules
+new file mode 100644
+index 000000000000..c1f398c324db
+--- /dev/null
++++ b/.gitmodules
+@@ -0,0 +1,4 @@
++[submodule "droidian/common_fragments"]
++	path = droidian/common_fragments
++	url = https://github.com/droidian-devices/common_fragments
++	branch = 4.14-android
+diff --git a/droidian/common_fragments b/droidian/common_fragments
+new file mode 160000
+index 000000000000..e39f5ce6f8fb
+--- /dev/null
++++ b/droidian/common_fragments
+@@ -0,0 +1 @@
++Subproject commit e39f5ce6f8fb235b21082b26a6023f5305196239
+-- 
+2.39.2
+

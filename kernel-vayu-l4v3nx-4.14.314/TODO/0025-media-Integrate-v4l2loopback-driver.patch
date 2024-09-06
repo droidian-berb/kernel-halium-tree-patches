@@ -1,0 +1,40 @@
+From 50b68d4a6c025313a5f46da8af48820c0ec17f99 Mon Sep 17 00:00:00 2001
+From: Alfred Neumayer <dev.beidl@gmail.com>
+Date: Sat, 2 Oct 2021 03:28:25 +0200
+Subject: [PATCH 25/35] media: Integrate v4l2loopback driver
+
+---
+ drivers/media/Makefile          | 1 +
+ drivers/media/v4l2-core/Kconfig | 7 +++++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/drivers/media/Makefile b/drivers/media/Makefile
+index 594b462ddf0e..9f18c799824a 100644
+--- a/drivers/media/Makefile
++++ b/drivers/media/Makefile
+@@ -21,6 +21,7 @@ endif
+ 
+ obj-$(CONFIG_VIDEO_DEV) += v4l2-core/
+ obj-$(CONFIG_DVB_CORE)  += dvb-core/
++obj-$(CONFIG_VIDEO_DEV) += v4l2loopback/
+ 
+ # There are both core and drivers at RC subtree - merge before drivers
+ obj-y += rc/
+diff --git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
+index a35c33686abf..1e94bec5ba1e 100644
+--- a/drivers/media/v4l2-core/Kconfig
++++ b/drivers/media/v4l2-core/Kconfig
+@@ -111,3 +111,10 @@ config VIDEOBUF2_DMA_SG
+ config VIDEOBUF2_DVB
+ 	tristate
+ 	select VIDEOBUF2_CORE
++
++config V4L2_LOOPBACK
++ 	tristate "v4l2loopback driver"
++ 	---help---
++ 	Enable v4l2loopback support, it allows to create
++ 	"virtual video devices". Normal (v4l2) applications will
++ 	read these devices as if they were ordinary video devices.
+-- 
+2.39.2
+
