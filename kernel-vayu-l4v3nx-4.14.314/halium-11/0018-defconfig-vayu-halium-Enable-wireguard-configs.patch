@@ -1,18 +1,18 @@
-From 9b93664d04a94efec03693b8286c2101921bec10 Mon Sep 17 00:00:00 2001
+From a848bd6a5881f5a8105fae529b3df36e4ef53506 Mon Sep 17 00:00:00 2001
 From: berbascum <berbascum@ticv.cat>
-Date: Fri, 6 Sep 2024 16:20:35 +0200
-Subject: [PATCH] (defconfig) vayu-halium: Enable wireguard configs
+Date: Tue, 10 Sep 2024 02:05:37 +0200
+Subject: [PATCH]  (defconfig) vayu-halium: Enable wireguard configs
 
 ---
  droidian/vayu-halium.config | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/droidian/vayu-halium.config b/droidian/vayu-halium.config
-index 0f27975e9416..73cdd87f444f 100644
+index 6639f26cc66e..db7953a49fc8 100644
 --- a/droidian/vayu-halium.config
 +++ b/droidian/vayu-halium.config
-@@ -73,10 +73,10 @@ CONFIG_DUMMY=n
- #CONFIG_MACVLAN=y
+@@ -68,10 +68,10 @@ CONFIG_FHANDLE=y
+ CONFIG_PM_AUTOSLEEP=y
  
  ## Wireguard configs
 -# CONFIG_WIREGUARD is not set
