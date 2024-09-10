@@ -1,0 +1,30 @@
+From 10cada5d695686d960452890dd941449abb8a9ea Mon Sep 17 00:00:00 2001
+From: berbascum <berbascum@ticv.cat>
+Date: Mon, 9 Sep 2024 23:56:12 +0200
+Subject: [PATCH] (build) Fix: CONFIGS discrepancies betewwn .config and
+ /proc/config.gz
+
+The kernel/config_data.gz creation from kernel/Makefile
+is getting vayu-perf_defconfig as source instead .config
+
+Fix: replaced with out/KERNEL_OBJ/.config in kernel/Makefile
+---
+ kernel/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 561da2fcafa6..5ac19be620e6 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -119,7 +119,7 @@ obj-$(CONFIG_HAS_IOMEM) += memremap.o
+ $(obj)/configs.o: $(obj)/config_data.h
+ 
+ targets += config_data.gz
+-$(obj)/config_data.gz: arch/arm64/configs/vendor/vayu-perf_defconfig FORCE
++$(obj)/config_data.gz: out/KERNEL_OBJ/.config FORCE
+ 	$(call if_changed,gzip)
+ 
+       filechk_ikconfiggz = (echo "static const char kernel_config_data[] __used = MAGIC_START"; cat $< | scripts/basic/bin2c; echo "MAGIC_END;")
+-- 
+2.39.2
+
